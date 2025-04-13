@@ -13,7 +13,7 @@ namespace AdoNetLib
             bool result;
             try
             {
-                var connection = new SqlConnection(ConnectionString.MsSqlConnection);
+                connection = new SqlConnection(ConnectionString.MsSqlConnection);
                 await connection.OpenAsync();
                 result = true;
             }
@@ -30,6 +30,19 @@ namespace AdoNetLib
             if (connection.State == ConnectionState.Open)
             {
                 await connection.CloseAsync();
+            }
+        }
+
+        //Чтобы избежать ошибок и не пытаться сделать выборку из закрытого ранее подключения
+        public SqlConnection GetConnection()
+        {
+            if (connection.State == ConnectionState.Open)
+            {
+                return connection;
+            }
+            else
+            {
+                throw new Exception("Подключение уже закрыто!");
             }
         }
     }
